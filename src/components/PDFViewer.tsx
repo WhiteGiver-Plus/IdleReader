@@ -208,133 +208,141 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({ className = '' }) => {
     <div className={`flex flex-col h-full bg-gray-50 ${className}`}>
       {/* 工具栏 - 在连续滚动模式下始终在最上方 */}
       {isToolbarVisible && (
-        <div className={`flex items-center justify-between p-4 bg-white border-b border-gray-200 shadow-sm ${isContinuousMode ? 'sticky top-0 z-10' : ''}`}>
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Upload size={20} />
-              <span>上传PDF</span>
-            </button>
-            
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".pdf"
-              onChange={handleFileUpload}
-              className="hidden"
-            />
+        <div className={`bg-white border-b border-gray-200 shadow-sm ${isContinuousMode ? 'sticky top-0 z-10' : ''}`}>
+          {/* 工具栏容器 - 支持水平滚动 */}
+          <div className="overflow-x-auto">
+            <div className="flex items-center justify-between p-3 sm:p-4 min-w-max">
+              <div className="flex items-center space-x-2 sm:space-x-4">
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base whitespace-nowrap"
+                >
+                  <Upload size={16} className="sm:hidden" />
+                  <Upload size={20} className="hidden sm:block" />
+                  <span>上传PDF</span>
+                </button>
+                
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
 
-            {file && (
-              <>
-                {!isContinuousMode && (
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={goToPreviousPage}
-                      disabled={pageNumber <= 1}
-                      className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <ChevronLeft size={20} />
-                    </button>
-                    
-                    <form onSubmit={handlePageInputSubmit} className="flex items-center space-x-2">
-                      <input
-                        type="text"
-                        value={pageInput}
-                        onChange={handlePageInputChange}
-                        className="w-16 px-2 py-1 text-center border border-gray-300 rounded"
-                      />
-                      <span className="text-gray-600">/ {numPages || 0}</span>
-                    </form>
-                    
-                    <button
-                      onClick={goToNextPage}
-                      disabled={!numPages || pageNumber >= numPages}
-                      className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <ChevronRight size={20} />
-                    </button>
-                  </div>
+                {file && (
+                  <>
+                    {!isContinuousMode && (
+                      <div className="flex items-center space-x-1 sm:space-x-2">
+                        <button
+                          onClick={goToPreviousPage}
+                          disabled={pageNumber <= 1}
+                          className="p-1.5 sm:p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <ChevronLeft size={18} />
+                        </button>
+                        
+                        <form onSubmit={handlePageInputSubmit} className="flex items-center space-x-1 sm:space-x-2">
+                          <input
+                            type="text"
+                            value={pageInput}
+                            onChange={handlePageInputChange}
+                            className="w-12 sm:w-16 px-2 py-1 text-center border border-gray-300 rounded text-sm"
+                          />
+                          <span className="text-gray-600 text-sm">/ {numPages || 0}</span>
+                        </form>
+                        
+                        <button
+                          onClick={goToNextPage}
+                          disabled={!numPages || pageNumber >= numPages}
+                          className="p-1.5 sm:p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <ChevronRight size={18} />
+                        </button>
+                      </div>
+                    )}
+
+                    <div className="flex items-center space-x-1 sm:space-x-2 border-l border-gray-300 pl-2 sm:pl-4">
+                      <button
+                        onClick={zoomOut}
+                        className="p-1.5 sm:p-2 rounded-lg hover:bg-gray-100"
+                        title="缩小"
+                      >
+                        <ZoomOut size={18} />
+                      </button>
+                      
+                      <span className="text-sm text-gray-600 min-w-[50px] sm:min-w-[60px] text-center">
+                        {Math.round(scale * 100)}%
+                      </span>
+                      
+                      <button
+                        onClick={zoomIn}
+                        className="p-1.5 sm:p-2 rounded-lg hover:bg-gray-100"
+                        title="放大"
+                      >
+                        <ZoomIn size={18} />
+                      </button>
+                      
+                      <button
+                        onClick={fitToWidth}
+                        className="px-2 sm:px-3 py-1 text-xs sm:text-sm rounded-lg hover:bg-gray-100 whitespace-nowrap"
+                        title="适应宽度"
+                      >
+                        <span className="hidden sm:inline">适应宽度</span>
+                        <span className="sm:hidden">适应</span>
+                      </button>
+                      
+                      <button
+                        onClick={resetZoom}
+                        className="p-1.5 sm:p-2 rounded-lg hover:bg-gray-100"
+                        title="重置缩放"
+                      >
+                        <Home size={14} className="sm:hidden" />
+                        <Home size={16} className="hidden sm:block" />
+                      </button>
+                    </div>
+
+                    <div className="flex items-center space-x-1 sm:space-x-2 border-l border-gray-300 pl-2 sm:pl-4">
+                      <button
+                        onClick={rotate}
+                        className="p-1.5 sm:p-2 rounded-lg hover:bg-gray-100"
+                        title="旋转"
+                      >
+                        <RotateCw size={18} />
+                      </button>
+                      
+                      <button
+                        onClick={toggleFullscreen}
+                        className="p-1.5 sm:p-2 rounded-lg hover:bg-gray-100"
+                        title="全屏"
+                      >
+                        <Maximize2 size={18} />
+                      </button>
+
+                      <button
+                        onClick={() => setIsContinuousMode(!isContinuousMode)}
+                        className={`p-1.5 sm:p-2 rounded-lg transition-colors ${
+                          isContinuousMode 
+                            ? 'bg-blue-100 text-blue-600 hover:bg-blue-200' 
+                            : 'hover:bg-gray-100'
+                        }`}
+                        title={isContinuousMode ? "单页模式" : "连续滚动模式"}
+                      >
+                        {isContinuousMode ? <FileText size={18} /> : <Scroll size={18} />}
+                      </button>
+
+                      <button
+                        onClick={() => setIsToolbarVisible(false)}
+                        className="p-1.5 sm:p-2 rounded-lg hover:bg-gray-100"
+                        title="隐藏工具栏"
+                      >
+                        <EyeOff size={18} />
+                      </button>
+                    </div>
+                  </>
                 )}
-
-                <div className="flex items-center space-x-2 border-l border-gray-300 pl-4">
-                  <button
-                    onClick={zoomOut}
-                    className="p-2 rounded-lg hover:bg-gray-100"
-                    title="缩小"
-                  >
-                    <ZoomOut size={20} />
-                  </button>
-                  
-                  <span className="text-sm text-gray-600 min-w-[60px] text-center">
-                    {Math.round(scale * 100)}%
-                  </span>
-                  
-                  <button
-                    onClick={zoomIn}
-                    className="p-2 rounded-lg hover:bg-gray-100"
-                    title="放大"
-                  >
-                    <ZoomIn size={20} />
-                  </button>
-                  
-                  <button
-                    onClick={fitToWidth}
-                    className="px-3 py-1 text-sm rounded-lg hover:bg-gray-100"
-                    title="适应宽度"
-                  >
-                    适应宽度
-                  </button>
-                  
-                  <button
-                    onClick={resetZoom}
-                    className="px-3 py-1 text-sm rounded-lg hover:bg-gray-100"
-                    title="重置缩放"
-                  >
-                    <Home size={16} />
-                  </button>
-                </div>
-
-                <div className="flex items-center space-x-2 border-l border-gray-300 pl-4">
-                  <button
-                    onClick={rotate}
-                    className="p-2 rounded-lg hover:bg-gray-100"
-                    title="旋转"
-                  >
-                    <RotateCw size={20} />
-                  </button>
-                  
-                  <button
-                    onClick={toggleFullscreen}
-                    className="p-2 rounded-lg hover:bg-gray-100"
-                    title="全屏"
-                  >
-                    <Maximize2 size={20} />
-                  </button>
-
-                  <button
-                    onClick={() => setIsContinuousMode(!isContinuousMode)}
-                    className={`p-2 rounded-lg transition-colors ${
-                      isContinuousMode 
-                        ? 'bg-blue-100 text-blue-600 hover:bg-blue-200' 
-                        : 'hover:bg-gray-100'
-                    }`}
-                    title={isContinuousMode ? "单页模式" : "连续滚动模式"}
-                  >
-                    {isContinuousMode ? <FileText size={20} /> : <Scroll size={20} />}
-                  </button>
-
-                  <button
-                    onClick={() => setIsToolbarVisible(false)}
-                    className="p-2 rounded-lg hover:bg-gray-100"
-                    title="隐藏工具栏"
-                  >
-                    <EyeOff size={20} />
-                  </button>
-                </div>
-              </>
-            )}
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -359,7 +367,7 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({ className = '' }) => {
         onWheel={handleWheel}
       >
         {file ? (
-          <div className={`${isContinuousMode ? 'space-y-4' : 'flex justify-center'} p-4`}>
+          <div className={`${isContinuousMode ? 'space-y-4' : 'flex justify-center'} p-2 sm:p-4`}>
             <Document
               file={file}
               onLoadSuccess={onDocumentLoadSuccess}
