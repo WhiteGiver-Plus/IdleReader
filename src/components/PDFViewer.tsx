@@ -425,21 +425,6 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({ className = '' }) => {
                 >
                   选择PDF文件
                 </button>
-                <div className="text-sm text-gray-500">或者试试示例文档：</div>
-                <div className="flex space-x-3">
-                  <button
-                    onClick={() => loadSamplePDF('dummy.pdf')}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
-                  >
-                    📄 示例文档1
-                  </button>
-                  <button
-                    onClick={() => loadSamplePDF('test.pdf')}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
-                  >
-                    📄 示例文档2
-                  </button>
-                </div>
               </div>
             </div>
           </div>
