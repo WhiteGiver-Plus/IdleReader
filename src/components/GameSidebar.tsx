@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useGameStore } from '../store/gameStore';
-import { ChevronLeft, ChevronRight, Coins, ShoppingCart, Star, Zap } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Coins, ShoppingCart, Star, Zap, RefreshCw } from 'lucide-react';
 
 interface GameSidebarProps {
   className?: string;
@@ -18,10 +18,21 @@ export const GameSidebar: React.FC<GameSidebarProps> = ({ className = '' }) => {
     malfunctionEndTime,
     toggleGamebar,
     buyEquipment,
-    buyUpgrade
+    buyUpgrade,
+    initializeGame
   } = useGameStore();
 
   const [activeTab, setActiveTab] = useState<'equipment' | 'upgrades'>('equipment');
+
+  // 重置游戏数据
+  const handleResetGame = () => {
+    if (window.confirm('确定要重置游戏数据吗？所有金币、设备和升级都会丢失！')) {
+      // 清除cookie
+      document.cookie = 'pdf-idle-game-storage=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      // 重新加载页面
+      window.location.reload();
+    }
+  };
 
   const formatNumber = (num: number): string => {
     if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
@@ -82,12 +93,21 @@ export const GameSidebar: React.FC<GameSidebarProps> = ({ className = '' }) => {
           <span className={status.color}>{status.icon}</span>
           <h2 className="font-bold">挂机工厂</h2>
         </div>
-        <button
-          onClick={toggleGamebar}
-          className="p-1 hover:bg-white hover:bg-opacity-20 rounded"
-        >
-          <ChevronRight size={20} />
-        </button>
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={handleResetGame}
+            className="p-1 hover:bg-white hover:bg-opacity-20 rounded"
+            title="重置游戏"
+          >
+            <RefreshCw size={16} />
+          </button>
+          <button
+            onClick={toggleGamebar}
+            className="p-1 hover:bg-white hover:bg-opacity-20 rounded"
+          >
+            <ChevronRight size={20} />
+          </button>
+        </div>
       </div>
 
       {/* 金币信息 */}

@@ -146,6 +146,35 @@ const initialUpgrades: Upgrade[] = [
   }
 ];
 
+// 简单的cookie存储
+const createCookieStorage = () => {
+  return {
+    getItem: (name: string) => {
+      const cookies = document.cookie.split(';');
+      const cookie = cookies.find(c => c.trim().startsWith(`${name}=`));
+      if (cookie) {
+        try {
+          return decodeURIComponent(cookie.split('=')[1]);
+        } catch {
+          return null;
+        }
+      }
+      return null;
+    },
+    
+    setItem: (name: string, value: string) => {
+      const expires = new Date();
+      expires.setDate(expires.getDate() + 30); // 30天过期
+      const encodedValue = encodeURIComponent(value);
+      document.cookie = `${name}=${encodedValue}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+    },
+    
+    removeItem: (name: string) => {
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    }
+  };
+};
+
 export const useGameStore = create<GameState>()(
   persist(
     (set, get) => ({
@@ -348,6 +377,7 @@ export const useGameStore = create<GameState>()(
     {
       name: 'pdf-idle-game-storage',
       version: 1,
+      storage: createJSONStorage(() => createCookieStorage()),
     }
   )
 );
